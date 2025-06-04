@@ -1,6 +1,8 @@
 ## Morpho Curation Execution Tool
 This project contains scripts for interacting with the Morpho Protocol, including vault creation, market setup, and various operations to setup.
 
+![diagram](https://i.imgur.com/zZWdW46.png)
+
 Follow the scripts in the order below:
 
 
