@@ -12,6 +12,8 @@ yarn install
 
 Make sure to make a copy of the .env.example and lable it .env as this will be used for the rest of the repo examples.
 
+To support all networks that may not be supported by viem by default, in the `scripts/config/config.ts` file.  You can manually add your network
+
 Follow the scripts in the order below:
 
 
