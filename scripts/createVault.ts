@@ -8,10 +8,10 @@ const METAMORPHO_FACTORY_ADDRESS = process.env.METAMORPHO_FACTORY_ADDRESS || "";
 
 // Parameters for creating a MetaMorpho vault
 const INITIAL_OWNER = account.address as `0x${string}`; // Owner of the vault, should be the same as WALLET_ADDRESS
-const INITIAL_TIMELOCK = 0n; // 0 for no timelock
-const VAULT_NAME = "TEST USDC Vault";
-const VAULT_SYMBOL = "TUSDCv1";
-const SALT = "0x0000000000000000000000000000000000000000000000000000000000000002"; // 0x0 as bytes32
+const INITIAL_TIMELOCK = process.env.INITIAL_TIMELOCK ? BigInt(process.env.INITIAL_TIMELOCK) : 0n; // 0 for no timelock
+const VAULT_NAME = process.env.VAULT_NAME || "TEST USDC Vault";
+const VAULT_SYMBOL = process.env.VAULT_SYMBOL || "TUSDCv1";
+const SALT = process.env.SALT || "0x0000000000000000000000000000000000000000000000000000000000000000"; // 0x0 as bytes32
 
 async function main() {
   if (!account) {

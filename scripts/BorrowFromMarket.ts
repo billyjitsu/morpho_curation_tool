@@ -7,7 +7,6 @@ import * as readline from 'readline';
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
 let borrowAmount = process.env.BORROW_AMOUNT || "0.5";
-// let tokenDecimals = parseInt(process.env.TOKEN_DECIMALS || "18");
 let receiver = process.env.RECEIVER || "";
 let oraclePrice = process.env.ORACLE_PRICE ? BigInt(process.env.ORACLE_PRICE) : 0n;
 let validateOracle = false;

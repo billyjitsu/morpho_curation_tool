@@ -49,8 +49,8 @@
     "market": "npx tsx scripts/marketInfo.ts",
     "supplyLoanTokenToMarket": "npx tsx scripts/supplyLoanTokensToMarket.ts",
     "withdrawLoanTokensFromMarket": "npx tsx scripts/withdrawLoanTokensFromMarket.ts",
-    "dappSpecificProxyEthers": "npx tsx scripts/utils/dappSpecificProxy.js",
     "dappSpecificProxy": "npx tsx scripts/utils/dappSpecificProxy.ts",
+    "changeOracleValue": "npx tsx scripts/changeMockOracleValue.ts",
     "liquidate": "npx tsx scripts/liquidate.ts",
     "flashloan": "npx tsx scripts/flashloan.ts"
   }

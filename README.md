@@ -3,6 +3,15 @@ This project contains scripts for interacting with the Morpho Protocol, includin
 
 ![diagram](https://i.imgur.com/zZWdW46.png)
 
+You can find the deployed Morpho addresses [here](https://docs.morpho.org/overview/resources/addresses/)
+
+Once you download the repo, make sure to install all the packages
+```
+yarn install
+```
+
+Make sure to make a copy of the .env.example and lable it .env as this will be used for the rest of the repo examples.
+
 Follow the scripts in the order below:
 
 
@@ -36,8 +45,12 @@ Sets initial vault parameters
 Returns vault address for subsequent operations
 
 ### Step 2a (Optional But Recommended): Generate your OEV rewards oracle
-This script will generate your specified oracle feeds.  These price feeds will have OEV enabled so if liquidations occur the Market will generate income if the liquidator uses OEV to liquidate the unhealthy position.  
-In the .env file, set a value for the price feed of choice. Ex  ETH/USD in DAPI_NAME and the name of your Market in DAPP_ALIAS
+This script will generate your specified oracle feeds.  These price feeds will have OEV enabled, so if liquidations occur, the Market will generate income if the liquidator uses OEV to liquidate the unhealthy position.  
+In the `.env file`, set a value for the price feed of choice. Ex:  ETH/USD in DAPI_NAME and the name of your Market in DAPP_ALIAS
+Ex: 
+
+- DAPI_NAME="ETH/USD"
+- DAPP_ALIAS="Billy ETH USDC Market"
 
 ```
 yarn dappSpecificProxy

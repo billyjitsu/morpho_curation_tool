@@ -1,7 +1,7 @@
 node_modules
 .env
 deployments
-arg.js
+args.js
 argseth.js
 argsusdc.js
 vaultArgs.js

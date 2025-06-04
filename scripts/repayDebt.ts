@@ -8,7 +8,6 @@ let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
 let repayAmount = process.env.REPAY_AMOUNT || "0.005";
 let repayAll = process.env.REPAY_ALL === "true" || false;
-// let tokenDecimals = parseInt(process.env.TOKEN_DECIMALS || "18");
 let onBehalf = process.env.ON_BEHALF || "";
 let validateOracle = false;
 

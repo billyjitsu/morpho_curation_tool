@@ -11,7 +11,7 @@ const GUARDIAN_ADDRESS = process.env.GUARDIAN_ADDRESS || "";
 const FEE_RECIPIENT_ADDRESS = process.env.FEE_RECIPIENT_ADDRESS || "";
 const SKIM_RECIPIENT_ADDRESS = process.env.SKIM_RECIPIENT_ADDRESS || "";
 // Fee configuration (1% - 18 decimals)
-const FEE_AMOUNT = process.env.FEE_AMOUNT || 10000000000000000n;
+const FEE_AMOUNT = process.env.FEE_AMOUNT ? BigInt(process.env.FEE_AMOUNT) : 10000000000000000n;
 
 // Function to wait for user confirmation
 async function waitForConfirmation(message: string): Promise<void> {
