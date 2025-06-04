@@ -39,6 +39,10 @@ Returns vault address for subsequent operations
 This script will generate your specified oracle feeds.  These price feeds will have OEV enabled so if liquidations occur the Market will generate income if the liquidator uses OEV to liquidate the unhealthy position.  
 In the .env file, set a value for the price feed of choice. Ex  ETH/USD in DAPI_NAME and the name of your Market in DAPP_ALIAS
 
+```
+yarn dappSpecificProxy
+ ```
+
 ### Step 2: Create Morpho Oracle
 Creates the oracle adaptor for you choice of oracle for both the Collateral Token and the Loan Token for your Market.
 While most oracles are compatible with this, I recommend using [Api3](https://market.api3.org/) oracles as they have OEV built into the oracle system for additional revenue options for the Market.
