@@ -1,6 +1,10 @@
 ## Morpho Curation Execution Tool
 This project contains scripts for interacting with the Morpho Protocol, including vault creation, market setup, and various operations to setup.
 
+[Code Flow Video Companion](https://www.youtube.com/watch?v=pQyvEe44Y8U)
+
+[OEV Oracle Setup Video](https://www.youtube.com/watch?v=BXgohiuHXww)
+
 ![diagram](https://i.imgur.com/zZWdW46.png)
 
 You can find the deployed Morpho addresses [here](https://docs.morpho.org/overview/resources/addresses/)
