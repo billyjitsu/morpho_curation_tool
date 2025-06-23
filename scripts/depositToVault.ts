@@ -1,11 +1,14 @@
 import { parseUnits, formatUnits } from "viem";
-import { publicClient, walletClient, account, target_Network } from "./config/configs";
+import { publicClient, createWalletByIndex, target_Network } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import VAULT_ABI from './abis/vault.json';
 import * as readline from 'readline';
 
+const walletClient = createWalletByIndex(0);
+console.log("Wallet Client address:", walletClient.account.address);
+
 let vaultAddress = process.env.VAULT_ADDRESS || "";
-let amount = process.env.DEPOSIT_AMOUNT || "10";
+let amount = process.env.DEPOSIT_AMOUNT || "10000";
 
 // Function to get user input
 function question(query: string): Promise<string> {
@@ -79,7 +82,7 @@ async function depositToVault() {
       address: depositTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     // Estimate shares that will be received
@@ -111,7 +114,7 @@ async function depositToVault() {
       address: depositTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "allowance",
-      args: [account.address, vaultAddress]
+      args: [walletClient.account.address, vaultAddress]
     });
     
     // Approve vault to spend tokens if needed
@@ -146,7 +149,7 @@ async function depositToVault() {
       address: vaultAddress as `0x${string}`,
       abi: VAULT_ABI,
       functionName: "deposit",
-      args: [depositAmount, account.address]
+      args: [depositAmount, walletClient.account.address]
     });
     
     console.log("Deposit transaction sent! Waiting for confirmation...");
@@ -160,7 +163,7 @@ async function depositToVault() {
       address: depositTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     const newTotalAssets = await publicClient.readContract({

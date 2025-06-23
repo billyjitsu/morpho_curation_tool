@@ -1,9 +1,11 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import ORACLE_FACTORY_ABI from './abis/oracle_factory.json';
 import ORACLE_AGGREGATOR_ABI from './abis/oracle_aggregator.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 let factoryAddress = process.env.ORACLE_FACTORY_ADDRESS || "";
 let loanTokenAddress = process.env.LOANTOKEN_ADDRESS || "";
@@ -16,8 +18,12 @@ let baseVault = process.env.BASE_VAULT || "0x00000000000000000000000000000000000
 let quoteVault = process.env.QUOTE_VAULT || "0x0000000000000000000000000000000000000000";
 let baseVaultConversionSample = process.env.BASE_VAULT_CONVERSION_SAMPLE || "1";
 let quoteVaultConversionSample = process.env.QUOTE_VAULT_CONVERSION_SAMPLE || "1";
-let salt = process.env.SALT || "0x0000000000000000000000000000000000000000000000000000000000000000";
+let salt = process.env.SALT || "0x0000000000000000000000000000000000000000000000000000000000000004";
 let skipVerification = false;
+
+// Retry configuration
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 5000; // 5 seconds
 
 // Define token information type
 interface TokenInfo {
@@ -34,6 +40,10 @@ interface OracleInfo {
   updatedAt: Date;
 }
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Function to get user input
 function question(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -47,6 +57,46 @@ function question(query: string): Promise<string> {
       resolve(answer);
     });
   });
+}
+
+// Retry function to get oracle address from logs
+async function getOracleAddressFromLogs(blockNumber: bigint, retries = MAX_RETRIES): Promise<Address | null> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`Attempting to get oracle address from logs (attempt ${attempt}/${retries})...`);
+      
+      const logs = await publicClient.getLogs({
+        address: factoryAddress as `0x${string}`,
+        event: {
+          type: 'event',
+          name: 'CreateMorphoChainlinkOracleV2',
+          inputs: [
+            { name: 'caller', type: 'address', indexed: false },
+            { name: 'oracle', type: 'address', indexed: false }
+          ]
+        },
+        fromBlock: blockNumber,
+        toBlock: blockNumber
+      });
+      
+      if (logs.length > 0 && logs[0].args && logs[0].args.oracle) {
+        return logs[0].args.oracle as Address;
+      }
+      
+      if (attempt < retries) {
+        console.log(`No logs found, waiting ${RETRY_DELAY/1000} seconds before retry...`);
+        await sleep(RETRY_DELAY);
+      }
+    } catch (error) {
+      console.log(`Error getting logs on attempt ${attempt}:`, error);
+      if (attempt < retries) {
+        console.log(`Waiting ${RETRY_DELAY/1000} seconds before retry...`);
+        await sleep(RETRY_DELAY);
+      }
+    }
+  }
+  
+  return null;
 }
 
 // Fetch token information
@@ -414,33 +464,12 @@ async function deployOracle() {
     
     const receipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
     
-    // Try to find the oracle address from the event logs
-    let oracleAddress: Address | undefined;
-    
-    try {
-      const logs = await publicClient.getLogs({
-        address: factoryAddress as `0x${string}`,
-        event: {
-          type: 'event',
-          name: 'CreateMorphoChainlinkOracleV2',
-          inputs: [
-            { name: 'caller', type: 'address', indexed: false },
-            { name: 'oracle', type: 'address', indexed: false }
-          ]
-        },
-        fromBlock: receipt.blockNumber,
-        toBlock: receipt.blockNumber
-      });
-      
-      if (logs.length > 0) {
-        oracleAddress = logs[0].args.oracle as Address;
-      }
-    } catch (error) {
-      console.warn("Warning: Could not parse event logs to find oracle address.");
-    }
+    // Try to find the oracle address from the event logs with retry logic
+    console.log("Checking transaction logs for the new oracle address...");
+    const oracleAddress = await getOracleAddressFromLogs(receipt.blockNumber);
     
     if (!oracleAddress) {
-      console.log("✅ Oracle deployed successfully, but couldn't automatically determine the address.");
+      console.log("✅ Oracle deployed successfully, but couldn't automatically determine the address after multiple attempts.");
       console.log("Check the transaction on the block explorer to find the deployed oracle address.");
       return;
     }

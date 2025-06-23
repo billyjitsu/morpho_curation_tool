@@ -1,11 +1,13 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO_ABI from './abis/morpho.json';
 
+const walletClient = createWalletByIndex(0);
+
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
-let userAddress = process.env.USER_ADDRESS || account.address;
+let userAddress = process.env.USER_ADDRESS || walletClient.account.address;
 
 interface TokenInfo {
   address: Address;

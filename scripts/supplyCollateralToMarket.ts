@@ -1,8 +1,10 @@
 import { parseUnits, formatUnits } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO_ABI from './abis/morpho.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
@@ -109,7 +111,7 @@ async function supplyCollateral() {
       address: morphoAddress as `0x${string}`,
       abi: MORPHO_ABI,
       functionName: "position",
-      args: [marketId as `0x${string}`, account.address]
+      args: [marketId as `0x${string}`, walletClient.account.address]
     });
     
     // Get the user's current balance
@@ -117,7 +119,7 @@ async function supplyCollateral() {
       address: collateralTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     // Convert the string amount to BigInt with proper decimals
@@ -158,7 +160,7 @@ async function supplyCollateral() {
       address: collateralTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "allowance",
-      args: [account.address, morphoAddress]
+      args: [walletClient.account.address, morphoAddress]
     });
     
     // Approve Morpho to spend tokens if needed
@@ -196,7 +198,7 @@ async function supplyCollateral() {
       args: [
         marketParamsTuple,
         collateralAmountBigInt,
-        account.address,
+        walletClient.account.address,
         "0x" // Empty data
       ]
     });
@@ -212,7 +214,7 @@ async function supplyCollateral() {
       address: morphoAddress as `0x${string}`,
       abi: MORPHO_ABI,
       functionName: "position",
-      args: [marketId as `0x${string}`, account.address]
+      args: [marketId as `0x${string}`, walletClient.account.address]
     });
     
     // Get updated balances
@@ -220,7 +222,7 @@ async function supplyCollateral() {
       address: collateralTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     console.log("\n======= Post-Supply Status =======");

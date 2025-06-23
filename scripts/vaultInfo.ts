@@ -1,5 +1,7 @@
 import { parseAbi, formatUnits } from "viem";
-import { publicClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
+
+const walletClient = createWalletByIndex(0);
 
 // Contract addresses
 const VAULT_ADDRESS = process.env.VAULT_ADDRESS || "";
@@ -98,13 +100,13 @@ async function main() {
         address: assetAddress,
         abi: ERC20_ABI,
         functionName: "balanceOf",
-        args: [account.address],
+        args: [walletClient.account.address],
       }),
       publicClient.readContract({
         address: VAULT_ADDRESS,
         abi: VAULT_ABI,
         functionName: "balanceOf",
-        args: [account.address],
+        args: [walletClient.account.address],
       }),
     ]);
 
@@ -132,13 +134,13 @@ async function main() {
         address: VAULT_ADDRESS,
         abi: VAULT_ABI,
         functionName: "maxDeposit",
-        args: [account.address],
+        args: [walletClient.account.address],
       }),
       publicClient.readContract({
         address: VAULT_ADDRESS,
         abi: VAULT_ABI,
         functionName: "maxWithdraw",
-        args: [account.address],
+        args: [walletClient.account.address],
       }),
     ]);
 

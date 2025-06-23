@@ -1,8 +1,9 @@
 import { parseUnits, formatUnits, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex, account } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
-// import MORPHO_ABI from './abis/morpho.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 // Environment variables
 let flashLoanContractAddress = process.env.FLASHLOAN_CONTRACT_ADDRESS || "";
@@ -70,7 +71,7 @@ async function main() {
   console.log("=========================");
   console.log("This demo will borrow tokens via flash loan and immediately repay them");
 
-  console.log("Executor address:", account.address);
+  console.log("Executor address:", walletClient.account.address);
   
   // Validate required parameters
   if (!flashLoanContractAddress) {
@@ -119,7 +120,7 @@ async function main() {
     address: tokenInfo.address,
     abi: ERC20_ABI,
     functionName: "balanceOf", 
-    args: [account.address]
+    args: [walletClient.account.address]
   }) as bigint;
 
   console.log("\n📊 Flash Loan Details");
@@ -180,7 +181,7 @@ async function main() {
       functionName: "owner"
     }) as Address;
     
-    if (contractOwner.toLowerCase() !== account.address.toLowerCase()) {
+    if (contractOwner.toLowerCase() !== walletClient.account.address.toLowerCase()) {
       console.log("⚠️ Warning: You are not the contract owner.");
     } else {
       console.log("✅ You are the contract owner.");
@@ -223,7 +224,7 @@ async function main() {
         address: tokenInfo.address,
         abi: ERC20_ABI,
         functionName: "balanceOf",
-        args: [account.address]
+        args: [walletClient.account.address]
       }) as bigint;
       
       const finalContractBalance = await publicClient.readContract({

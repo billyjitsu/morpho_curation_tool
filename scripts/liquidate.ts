@@ -1,12 +1,14 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex, account } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO_ABI from './abis/morpho.json';
 import * as readline from 'readline';
 
+const walletClient = createWalletByIndex(0);
+
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
-let borrowerAddress = process.env.BORROWER_ADDRESS || account.address; // Default to the wallet address if not provided
+let borrowerAddress = process.env.BORROWER_ADDRESS || walletClient.account.address; // Default to the wallet address if not provided
 let seizedAssets = process.env.SEIZED_ASSETS || "0"; // Amount of collateral to seize
 let repaidShares = process.env.REPAID_SHARES || "0"; // Amount of debt shares to repay
 let maxLiquidation = process.env.MAX_LIQUIDATION === "true" || false; // Liquidate maximum possible
@@ -385,7 +387,7 @@ async function liquidatePosition() {
       address: marketParams.loanToken,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     }) as bigint;
 
     if (liquidatorBalance < repaidAssetsBigInt) {
@@ -419,7 +421,7 @@ async function liquidatePosition() {
       address: marketParams.loanToken,
       abi: parseAbi(["function allowance(address owner, address spender) view returns (uint256)"]),
       functionName: "allowance",
-      args: [account.address, morphoAddress]
+      args: [walletClient.account.address, morphoAddress]
     }) as bigint;
 
     if (allowance < repaidAssetsBigInt) {
@@ -474,14 +476,14 @@ async function liquidatePosition() {
       address: marketParams.loanToken,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     }) as bigint;
 
     const newLiquidatorCollateralBalance = await publicClient.readContract({
       address: marketParams.collateralToken,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     }) as bigint;
 
     console.log(`\n🎉 LIQUIDATION RESULTS:`);

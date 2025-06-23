@@ -1,8 +1,12 @@
 import { parseUnits, formatUnits } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import VAULT_ABI from './abis/vault.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
+
+console.log("Wallet client account:", walletClient.account.address)
 
 let vaultAddress = process.env.VAULT_ADDRESS || "";
 let amount = process.env.WITHDRAW_AMOUNT || "1";
@@ -82,7 +86,7 @@ async function withdrawFromVault() {
       address: vaultAddress as `0x${string}`,
       abi: VAULT_ABI,
       functionName: "maxWithdraw",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     // Get the user's current balance of vault tokens
@@ -90,7 +94,7 @@ async function withdrawFromVault() {
       address: vaultAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     // Convert the string amount to BigInt with proper decimals
@@ -146,7 +150,7 @@ async function withdrawFromVault() {
       address: vaultAddress as `0x${string}`,
       abi: VAULT_ABI,
       functionName: "withdraw",
-      args: [withdrawAmount, account.address, account.address]
+      args: [withdrawAmount, walletClient.account.address, walletClient.account.address]
     });
     
     console.log("Withdrawal transaction sent! Waiting for confirmation...");
@@ -160,7 +164,7 @@ async function withdrawFromVault() {
       address: vaultAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     const newTotalAssets = await publicClient.readContract({
@@ -173,7 +177,7 @@ async function withdrawFromVault() {
       address: depositTokenAddress as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     });
     
     console.log("\n======= Post-Withdrawal Status =======");

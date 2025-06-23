@@ -1,8 +1,10 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO_ABI from './abis/morpho.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
@@ -146,7 +148,7 @@ async function repayLoan() {
 
   // If onBehalf is not set, use the wallet's address
   if (!onBehalf) {
-    onBehalf = account.address;
+    onBehalf = walletClient.account.address;
   }
 
   try {
@@ -271,7 +273,7 @@ async function repayLoan() {
       address: loanToken as `0x${string}`,
       abi: ERC20_ABI,
       functionName: "balanceOf",
-      args: [account.address]
+      args: [walletClient.account.address]
     }) as bigint;
     
     if (userBalance < repayAmountBigInt) {
@@ -317,7 +319,7 @@ async function repayLoan() {
       address: loanToken as `0x${string}`,
       abi: parseAbi(["function allowance(address owner, address spender) view returns (uint256)"]),
       functionName: "allowance",
-      args: [account.address, morphoAddress]
+      args: [walletClient.account.address, morphoAddress]
     }) as bigint;
     
     if (allowance < repayAmountBigInt) {
@@ -385,7 +387,7 @@ async function repayLoan() {
         address: loanToken as `0x${string}`,
         abi: ERC20_ABI,
         functionName: "balanceOf",
-        args: [account.address]
+        args: [walletClient.account.address]
       });
     } catch (error) {
       console.warn("⚠️ Could not fetch updated balance.");

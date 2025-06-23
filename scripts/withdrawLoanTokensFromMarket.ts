@@ -1,8 +1,10 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO_ABI from './abis/morpho.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
@@ -145,12 +147,12 @@ async function withdrawFromMarket() {
 
   // If onBehalf is not set, use the wallet's address
   if (!onBehalf) {
-    onBehalf = account.address;
+    onBehalf = walletClient.account.address;
   }
 
   // If receiver is not set, use the wallet's address
   if (!receiver) {
-    receiver = account.address;
+    receiver = walletClient.account.address;
   }
 
   try {
@@ -328,12 +330,12 @@ async function withdrawFromMarket() {
     console.log("==================================\n");
     
     // Check if user has authorization to withdraw on behalf of another address
-    if (onBehalf.toLowerCase() !== account.address.toLowerCase()) {
+    if (onBehalf.toLowerCase() !== walletClient.account.address.toLowerCase()) {
       const isAuthorized = await publicClient.readContract({
         address: morphoAddress as `0x${string}`,
         abi: MORPHO_ABI,
         functionName: "isAuthorized",
-        args: [onBehalf as `0x${string}`, account.address]
+        args: [onBehalf as `0x${string}`, walletClient.account.address]
       }) as boolean;
       
       if (!isAuthorized) {

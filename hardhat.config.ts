@@ -7,10 +7,10 @@ const config: HardhatUserConfig = {
   networks: {
     targetNetwork: {
       url: process.env.TARGET_NETWORK_RPC_URL!,
-      // accounts: {
-      //   mnemonic: process.env.MNEMONIC!,
-      // },
-      accounts: [process.env.PRIVATE_KEY!],
+      accounts: {
+        mnemonic: process.env.MNEMONIC!,
+      },
+      // accounts: [process.env.PRIVATE_KEY!],
     },
   },
   solidity: {

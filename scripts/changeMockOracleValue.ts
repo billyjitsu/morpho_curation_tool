@@ -1,5 +1,7 @@
 import { parseAbi, parseUnits } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
+
+const walletClient = createWalletByIndex(0);
 
 // Contract addresses
 const MOCK_ORACLE_ADDRESS = process.env.MOCK_ORACLE_ADDRESS || "";
@@ -15,9 +17,7 @@ const MOCK_ORACLE_ABI = parseAbi([
 ]);
 
 async function main() {
-  if (!account) {
-    throw new Error("PRIVATE_KEY environment variable is required");
-  }
+  
   if (!MOCK_ORACLE_ADDRESS) {
     throw new Error("MOCK_ORACLE_ADDRESS environment variable is required");
   }

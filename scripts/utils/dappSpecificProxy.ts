@@ -1,8 +1,10 @@
 import * as api3Contracts from "@api3/contracts";
 import * as api3DapiManagement from "@api3/dapi-management";
 import { stringToHex, keccak256, encodePacked, Address, Hex } from "viem";
-import { publicClient, walletClient, target_Network } from "../config/configs";
+import { publicClient, createWalletByIndex, target_Network } from "../config/configs";
 import API3_READER_PROXY_V1_FACTORY_ABI from "../abis/IApi3ReaderProxy.json";
+
+const walletClient = createWalletByIndex(0); 
 
 interface Dapi {
   name: string;

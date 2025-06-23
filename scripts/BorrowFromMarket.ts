@@ -1,8 +1,10 @@
 import { parseUnits, formatUnits, parseAbi, PublicClient, type Address } from "viem";
-import { publicClient, walletClient, account } from "./config/configs";
+import { publicClient, createWalletByIndex, account } from "./config/configs";
 import ERC20_ABI from './abis/ERC20.json';
 import MORPHO from './abis/morpho.json';
 import * as readline from 'readline';
+
+const walletClient = createWalletByIndex(0);
 
 let morphoAddress = process.env.MORPHO_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
@@ -153,7 +155,7 @@ async function borrowFromMarket() {
 
   // Set receiver to the caller's address if not specified
   if (!receiver) {
-    receiver = account.address;
+    receiver = walletClient.account.address;
   }
 
   try {
@@ -226,7 +228,7 @@ async function borrowFromMarket() {
         address: morphoAddress as `0x${string}`,
         abi: MORPHO,
         functionName: "position",
-        args: [marketId as `0x${string}`, account.address]
+        args: [marketId as `0x${string}`, walletClient.account.address]
       });
       
       if (Array.isArray(positionResult)) {
@@ -383,7 +385,7 @@ async function borrowFromMarket() {
         marketParamsTuple, // Pass the market params object
         borrowAmountBigInt, // assets
         0n, // shares (0 since we're specifying assets)
-        account.address, // onBehalf
+        walletClient.account.address, // onBehalf
         receiver as `0x${string}` // receiver
       ]
     });
@@ -401,7 +403,7 @@ async function borrowFromMarket() {
         address: morphoAddress as `0x${string}`,
         abi: MORPHO,
         functionName: "position",
-        args: [marketId as `0x${string}`, account.address]
+        args: [marketId as `0x${string}`, walletClient.account.address]
       });
     } catch (error) {
       console.warn("⚠️ Could not fetch updated position.");

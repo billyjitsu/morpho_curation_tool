@@ -1,5 +1,7 @@
-import { publicClient, walletClient } from "./config/configs";
+import { publicClient, createWalletByIndex } from "./config/configs";
 import VAULT_ABI from "./abis/vault.json";
+
+const walletClient = createWalletByIndex(0); 
 
 let vaultAddress = process.env.VAULT_ADDRESS || "";
 let marketId = process.env.MARKET_ID || "";
