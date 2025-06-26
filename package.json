@@ -53,6 +53,7 @@
     "changeOracleValue": "npx tsx scripts/changeMockOracleValue.ts",
     "liquidate": "npx tsx scripts/liquidate.ts",
     "flashloan": "npx tsx scripts/flashloan.ts",
-    "distribute": "npx tsx scripts/simulation/distributeTokens.ts"
+    "distribute": "npx tsx scripts/simulation/distributeTokens.ts",
+    "depositBundle": "npx tsx scripts/simulation/depositBundle.ts"
   }
 }
