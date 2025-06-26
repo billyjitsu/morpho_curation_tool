@@ -52,6 +52,7 @@
     "dappSpecificProxy": "npx tsx scripts/utils/dappSpecificProxy.ts",
     "changeOracleValue": "npx tsx scripts/changeMockOracleValue.ts",
     "liquidate": "npx tsx scripts/liquidate.ts",
-    "flashloan": "npx tsx scripts/flashloan.ts"
+    "flashloan": "npx tsx scripts/flashloan.ts",
+    "distribute": "npx tsx scripts/simulation/distributeTokens.ts"
   }
 }
